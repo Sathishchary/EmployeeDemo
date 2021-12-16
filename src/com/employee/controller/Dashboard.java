@@ -1,31 +1,31 @@
 package com.employee.controller;
 
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@WebServlet("/dashboard")
 public class Dashboard extends HttpServlet{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@Override
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, java.io.IOException {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-
-        if (username != null && password != null) {
-        // request.getSession().setAttribute("user", user);
-//        	PrintWriter out = response.getWriter();
-//         	out.write("<html><body>Employee DashBoard</body></html>");
-       // 	response.sendRedirect("/dashboard.html");
-         	 request.getRequestDispatcher("dashboard").forward(request, response);
-        }
-        else {
-           request.setAttribute("error", "Unknown user, please try again");
-           request.getRequestDispatcher("login").forward(request, response);
-        }
-    }
+	public void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+	    RequestDispatcher view = req.getRequestDispatcher("dashboard.jsp");
+	    try {
+			view.forward(req, resp);
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

@@ -1,17 +1,18 @@
 package com.employee.controller;
 
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.employee.dao.DbConnection;
-
+@WebServlet("/login")
 public class Login extends HttpServlet {
 
    	private static final long serialVersionUID = 63486395741532640L;
@@ -20,32 +21,37 @@ public class Login extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, java.io.IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-       
         if (username != null && password != null) {
         Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 		try {
 			con = DbConnection.initializeDatabase();
 		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
         // Create a SQL query to insert data into demo table
         try {
-			PreparedStatement st = con.prepareStatement("select * from user_profile where password="+password);
-			System.out.println(st);
+             ps = con.prepareStatement("select * from user_profile where username=? and password_info=?");
+             ps.setString(1, username);
+             ps.setString(2, password);
+             rs = ps.executeQuery();
+             boolean st = rs.next();
+             request.getSession().setAttribute("loggedInUser", username);
+             if(st) {
+            	 response.sendRedirect("dashboard");
+             } else {
+            	 response.sendRedirect("index");
+             }
+             DbConnection.closeConnections(rs, ps, con);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-        
-
-      
+		} 
         // request.getSession().setAttribute("user", user);
-                	PrintWriter out = response.getWriter();
-                	out.write("<html><body>Employee DashBoard</body></html>");
        // 	response.sendRedirect("/dashboard.html");
-         	 request.getRequestDispatcher("dashboard").forward(request, response);
+         	// request.getRequestDispatcher("dashboard").forward(request, response);
         }
         else {
            username= "";

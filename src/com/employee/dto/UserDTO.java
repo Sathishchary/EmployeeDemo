@@ -1,6 +1,6 @@
 package com.employee.dto;
 
-public class SingupDTO {
+public class UserDTO {
 	private String username;
 	private String password;
 	private String emailId;
